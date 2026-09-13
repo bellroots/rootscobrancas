@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Berlan Roots</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #F6F3EC;
+    --paper: #FFFFFF;
+    --ink: #23241F;
+    --ink-soft: #6B6A63;
+    --line: #DEDACD;
+    --pine: #1D3B34;
+    --pine-light: #2C5148;
+    --gold: #A9762F;
+    --gold-soft: #F1E4CC;
+    --red: #9C4438;
+    --green: #3F6B4B;
+    --radius: 4px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  #app{
+    max-width:480px;
+    margin:0 auto;
+    min-height:100vh;
+    background:var(--bg);
+    display:flex;
+    flex-direction:column;
+    position:relative;
+    padding-bottom:64px;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    margin:0;
+    color:var(--pine);
+  }
+  .num{
+    font-family:'IBM Plex Mono', monospace;
+    font-variant-numeric:tabular-nums;
+  }
+  /* ---------- TOP BAR ---------- */
+  header.topbar{
+    padding:20px 20px 14px;
+    border-bottom:1px solid var(--line);
+    background:var(--bg);
+    position:sticky;
+    top:0;
+    z-index:5;
+  }
+  header.topbar h1{font-size:22px;letter-spacing:0.2px;}
+  header.topbar .subtitle{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin-top:2px;
+  }
+  /* ---------- AUTH ---------- */
+  .auth-screen{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding:32px 28px;
+  }
+  .auth-screen h1{font-size:30px;margin-bottom:4px;}
+  .auth-screen .tagline{color:var(--ink-soft);font-size:14px;margin-bottom:28px;}
+  .field{margin-bottom:14px;}
+  .field label{
+    display:block;
+    font-size:12px;
+    text-transform:none;
+    color:var(--ink-soft);
+    margin-bottom:5px;
+  }
+  .field input, .field select, .field textarea{
+    width:100%;
+    padding:11px 12px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:var(--paper);
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:15px;
+    color:var(--ink);
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{
+    outline:2px solid var(--pine-light);
+    outline-offset:0;
+    border-color:var(--pine-light);
+  }
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    width:100%;
+    padding:12px 16px;
+    border-radius:var(--radius);
+    border:1px solid var(--pine);
+    background:var(--pine);
+    color:#fff;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:15px;
+    font-weight:500;
+    cursor:pointer;
+    text-align:center;
+  }
+  .btn:active{background:var(--pine-light);}
+  .btn.secondary{
+    background:transparent;
+    color:var(--pine);
+  }
+  .btn.danger{
+    background:transparent;
+    border-color:var(--red);
+    color:var(--red);
+  }
+  .btn.small{
+    width:auto;
+    padding:8px 14px;
+    font-size:13px;
+  }
+  .link-btn{
+    background:none;
+    border:none;
+    color:var(--pine);
+    font-size:13.5px;
+    text-decoration:underline;
+    cursor:pointer;
+    padding:0;
+    margin-top:14px;
+    display:block;
+    text-align:center;
+    width:100%;
+  }
+  .error-msg{
+    background:#F7E8E4;
+    color:var(--red);
+    border:1px solid #E3C3B9;
+    border-radius:var(--radius);
+    padding:10px 12px;
+    font-size:13px;
+    margin-bottom:14px;
+  }
+  .info-msg{
+    background:var(--gold-soft);
+    color:#5C4013;
+    border:1px solid #E1C68C;
+    border-radius:var(--radius);
+    padding:10px 12px;
+    font-size:13px;
+    margin-bottom:14px;
+  }
+  /* ---------- SCREENS / VIEWS ---------- */
+  main.view{
+    flex:1;
+    padding:16px 16px 20px;
+  }
+  .section-title{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    letter-spacing:0.3px;
+    margin:18px 0 8px 2px;
+  }
+  /* Summary ledger row */
+  .ledger{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:6px;
+    overflow:hidden;
+  }
+  .ledger-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:13px 15px;
+    border-bottom:1px solid var(--line);
+  }
+  .ledger-row:last-child{border-bottom:none;}
+  .ledger-row .label{font-size:14px;color:var(--ink-soft);}
+  .ledger-row .value{font-size:16px;font-weight:600;}
+  .value.pos{color:var(--pine);}
+  .value.warn{color:var(--red);}
+  /* search */
+  .search-bar{
+    display:flex;
+    gap:8px;
+    margin-bottom:10px;
+  }
+  .search-bar input{flex:1;}
+  /* list card */
+  .card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:14px 15px;
+    margin-bottom:10px;
+    cursor:pointer;
+  }
+  .card .row1{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:3px;
+  }
+  .card .name{font-size:15.5px;font-weight:600;}
+  .card .amount{font-size:15px;font-weight:600;color:var(--pine);}
+  .card .meta{font-size:12.5px;color:var(--ink-soft);}
+  .badge{
+    display:inline-block;
+    font-size:11px;
+    padding:2px 8px;
+    border-radius:20px;
+    font-weight:500;
+  }
+  .badge.ativo{background:#E5EEE7;color:var(--green);}
+  .badge.pago,.badge.paga{background:#E5EEE7;color:var(--green);}
+  .badge.vencida,.badge.vencido{background:#F7E8E4;color:var(--red);}
+  .badge.a_vencer{background:#EFEBDE;color:var(--ink-soft);}
+  .badge.quitado{background:#E2E7F0;color:#3B4E75;}
+  .empty-state{
+    text-align:center;
+    padding:40px 20px;
+    color:var(--ink-soft);
+  }
+  .empty-state .big{font-family:'Fraunces',serif;font-size:19px;color:var(--pine);margin-bottom:6px;}
+  /* fab */
+  .fab{
+    position:fixed;
+    max-width:480px;
+    margin:0 auto;
+    left:0;right:0;
+    bottom:76px;
+    display:flex;
+    justify-content:flex-end;
+    pointer-events:none;
+    padding:0 16px;
+  }
+  .fab button{
+    pointer-events:all;
+    width:52px;height:52px;
+    border-radius:50%;
+    background:var(--gold);
+    color:#fff;
+    border:none;
+    font-size:26px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.18);
+    cursor:pointer;
+  }
+  /* bottom nav */
+  nav.tabbar{
+    position:fixed;
+    bottom:0;left:0;right:0;
+    max-width:480px;
+    margin:0 auto;
+    background:var(--paper);
+    border-top:1px solid var(--line);
+    display:flex;
+    z-index:10;
+  }
+  nav.tabbar button{
+    flex:1;
+    background:none;
+    border:none;
+    padding:9px 0 8px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:2px;
+    color:var(--ink-soft);
+    font-size:11px;
+    font-family:'IBM Plex Sans',sans-serif;
+    cursor:pointer;
+  }
+  nav.tabbar button.active{color:var(--pine);font-weight:600;}
+  nav.tabbar .icon{font-size:19px;}
+  /* modal / sheet */
+  .sheet-overlay{
+    position:fixed;inset:0;
+    background:rgba(20,20,15,0.4);
+    display:flex;
+    align-items:flex-end;
+    z-index:50;
+  }
+  .sheet{
+    background:var(--bg);
+    width:100%;
+    max-width:480px;
+    margin:0 auto;
+    max-height:88vh;
+    overflow-y:auto;
+    border-radius:14px 14px 0 0;
+    padding:18px 18px 28px;
+  }
+  .sheet-handle{
+    width:36px;height:4px;
+    background:var(--line);
+    border-radius:2px;
+    margin:0 auto 14px;
+  }
+  .sheet-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:14px;
+  }
+  .sheet-header h2{font-size:19px;}
+  .close-x{
+    background:none;border:none;
+    font-size:20px;color:var(--ink-soft);
+    cursor:pointer;padding:4px;
+  }
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .divider{height:1px;background:var(--line);margin:16px 0;}
+  .top-actions{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+  .back-btn{
+    background:none;border:none;color:var(--pine);font-size:14px;
+    cursor:pointer;padding:6px 0;display:flex;align-items:center;gap:4px;
+  }
+  .client-detail-header{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:16px;
+    margin-bottom:6px;
+  }
+  .parcela-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .parcela-row:last-child{border:none;}
+  .parcela-num{font-size:13px;color:var(--ink-soft);width:26px;}
+  .parcela-info{flex:1;}
+  .parcela-venc{font-size:13.5px;}
+  .parcela-val{font-size:13px;color:var(--ink-soft);}
+  .loading{
+    text-align:center;
+    padding:30px;
+    color:var(--ink-soft);
+    font-size:13px;
+  }
+  .toast{
+    position:fixed;
+    bottom:80px;left:16px;right:16px;
+    max-width:448px;
+    margin:0 auto;
+    background:var(--pine);
+    color:#fff;
+    padding:11px 16px;
+    border-radius:6px;
+    font-size:13.5px;
+    z-index:60;
+    text-align:center;
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ============================================================
+   CONFIG — Supabase
+============================================================ */
+const SUPABASE_URL = "https://vfxigjrawmshkwhfifsn.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmeGlnanJhd21zaGt3aGZpZnNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkyNTUxMTEsImV4cCI6MjEwNDgzMTExMX0.H1QTVPs6wdk5-8qn_tB5K74eOHWhyX_kQsPOK0hGFmE";
+
+let session = null; // { access_token, refresh_token, user }
+let state = {
+  screen: "loading", // auth | home | clientes | clienteDetalhe | emprestimoDetalhe
+  authMode: "login",
+  authError: "",
+  clientes: [],
+  clienteAtual: null,
+  emprestimos: [],
+  emprestimoAtual: null,
+  parcelas: [],
+  resumo: null,
+  sheet: null, // 'novoCliente' | 'novoEmprestimo' | 'editarCliente'
+  toast: null,
+  busy: false,
+};
+
+function render(){ App(); }
+
+/* ============================================================
+   SUPABASE HELPERS (fetch puro, sem SDK)
+============================================================ */
+async function authRequest(path, body){
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/${path}`, {
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      "apikey": SUPABASE_ANON_KEY
+    },
+    body: JSON.stringify(body)
+  });
+  const data = await res.json();
+  if(!res.ok){ throw new Error(data.error_description || data.msg || data.error || "Erro de autenticação"); }
+  return data;
+}
+
+async function api(path, {method="GET", body=null, prefer=null} = {}){
+  const headers = {
+    "apikey": SUPABASE_ANON_KEY,
+    "Content-Type":"application/json",
+  };
+  if(session) headers["Authorization"] = `Bearer ${session.access_token}`;
+  if(prefer) headers["Prefer"] = prefer;
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    method, headers,
+    body: body ? JSON.stringify(body) : null
+  });
+  if(!res.ok){
+    let msg = "Erro na requisição";
+    try{ const j = await res.json(); msg = j.message || msg; }catch(e){}
+    throw new Error(msg);
+  }
+  if(res.status === 204) return null;
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
+}
+
+function saveSession(s){
+  session = s;
+  if(s) localStorage.setItem("br_session", JSON.stringify(s));
+  else localStorage.removeItem("br_session");
+}
+function loadSession(){
+  try{
+    const raw = localStorage.getItem("br_session");
+    if(raw) session = JSON.parse(raw);
+  }catch(e){}
+}
+
+/* ============================================================
+   AUTH ACTIONS
+============================================================ */
+async function doSignup(email, password){
+  state.authError = ""; state.busy = true; render();
+  try{
+    const data = await authRequest("signup", { email, password });
+    if(data.access_token){
+      saveSession({access_token:data.access_token, refresh_token:data.refresh_token, user:data.user});
+      await goHome();
+    } else {
+      state.toast = "Conta criada! Verifique seu e-mail para confirmar o acesso.";
+      state.authMode = "login";
+    }
+  }catch(e){ state.authError = e.message; }
+  state.busy = false; render();
+}
+
+async function doLogin(email, password){
+  state.authError = ""; state.busy = true; render();
+  try{
+    const data = await authRequest("token?grant_type=password", { email, password });
+    saveSession({access_token:data.access_token, refresh_token:data.refresh_token, user:data.user});
+    await goHome();
+  }catch(e){ state.authError = "E-mail ou senha inválidos."; }
+  state.busy = false; render();
+}
+
+function doLogout(){
+  saveSession(null);
+  state = {...state, screen:"auth", authMode:"login", clientes:[], clienteAtual:null, emprestimos:[], parcelas:[]};
+  render();
+}
+
+/* ============================================================
+   DATA LOADERS
+============================================================ */
+async function goHome(){
+  state.screen = "home";
+  render();
+  await loadResumo();
+}
+
+async function loadResumo(){
+  try{
+    const emprestimos = await api("emprestimos?select=*");
+    const parcelas = await api("parcelas?select=*");
+    const totalEmprestado = emprestimos.reduce((s,e)=>s+Number(e.valor_principal),0);
+    const totalRecebido = parcelas.reduce((s,p)=>s+Number(p.valor_pago||0),0);
+    const emAberto = parcelas.filter(p=>p.status!=='paga').reduce((s,p)=>s+(Number(p.valor_original)-Number(p.valor_pago||0)),0);
+    const vencidas = parcelas.filter(p=> p.status==='a_vencer' && new Date(p.data_vencimento) < new Date());
+    state.resumo = {
+      totalEmprestado, totalRecebido, emAberto,
+      qtdClientesAtivos: null,
+      qtdEmprestimosAtivos: emprestimos.filter(e=>e.status==='ativo').length,
+      qtdVencidas: vencidas.length
+    };
+  }catch(e){ console.error(e); }
+  render();
+}
+
+async function loadClientes(){
+  state.screen = "clientes"; render();
+  try{
+    state.clientes = await api("clientes?select=*&order=nome.asc");
+  }catch(e){ console.error(e); }
+  render();
+}
+
+async function abrirCliente(cliente){
+  state.clienteAtual = cliente;
+  state.screen = "clienteDetalhe";
+  state.emprestimos = [];
+  render();
+  try{
+    state.emprestimos = await api(`emprestimos?cliente_id=eq.${cliente.id}&select=*&order=created_at.desc`);
+  }catch(e){ console.error(e); }
+  render();
+}
+
+async function abrirEmprestimo(emp){
+  state.emprestimoAtual = emp;
+  state.screen = "emprestimoDetalhe";
+  state.parcelas = [];
+  render();
+  try{
+    state.parcelas = await api(`parcelas?emprestimo_id=eq.${emp.id}&select=*&order=numero.asc`);
+  }catch(e){ console.error(e); }
+  render();
+}
+
+/* ============================================================
+   MUTATIONS
+============================================================ */
+async function criarCliente(payload){
+  state.busy = true; render();
+  try{
+    payload.user_id = session.user.id;
+    const [novo] = await api("clientes", {method:"POST", body:payload, prefer:"return=representation"});
+    state.sheet = null;
+    await loadClientes();
+    state.toast = "Cliente cadastrado.";
+  }catch(e){ state.toast = "Erro: " + e.message; }
+  state.busy = false; render();
+}
+
+async function editarCliente(id, payload){
+  state.busy = true; render();
+  try{
+    await api(`clientes?id=eq.${id}`, {method:"PATCH", body:payload});
+    state.sheet = null;
+    const atualizado = await api(`clientes?id=eq.${id}&select=*`);
+    state.clienteAtual = atualizado[0];
+    state.toast = "Dados atualizados.";
+  }catch(e){ state.toast = "Erro: " + e.message; }
+  state.busy = false; render();
+}
+
+function calcularParcelas({valor, taxa, qtd, dataInicio, sistema}){
+  const parcelas = [];
+  taxa = Number(taxa)/100;
+  valor = Number(valor);
+  qtd = Number(qtd);
+  let valorParcela;
+  if(sistema === "juros_simples"){
+    const jurosTotal = valor * taxa * qtd;
+    valorParcela = (valor + jurosTotal) / qtd;
+  } else {
+    // Price (parcelas fixas)
+    if(taxa === 0){ valorParcela = valor / qtd; }
+    else {
+      valorParcela = valor * (taxa * Math.pow(1+taxa, qtd)) / (Math.pow(1+taxa, qtd) - 1);
+    }
+  }
+  valorParcela = Math.round(valorParcela * 100) / 100;
+  const dt = new Date(dataInicio + "T00:00:00");
+  for(let i=1;i<=qtd;i++){
+    const venc = new Date(dt);
+    venc.setMonth(venc.getMonth() + (i-1));
+    parcelas.push({
+      numero:i,
+      data_vencimento: venc.toISOString().slice(0,10),
+      valor_original: valorParcela,
+      valor_pago: 0,
+      status: "a_vencer"
+    });
+  }
+  return { valorParcela, parcelas };
+}
+
+async function criarEmprestimo(form){
+  state.busy = true; render();
+  try{
+    const { valorParcela, parcelas } = calcularParcelas({
+      valor: form.valor_principal, taxa: form.taxa_juros_mensal,
+      qtd: form.quantidade_parcelas, dataInicio: form.data_primeiro_vencimento,
+      sistema: form.sistema_calculo
+    });
+    const payload = {
+      user_id: session.user.id,
+      cliente_id: state.clienteAtual.id,
+      valor_principal: Number(form.valor_principal),
+      taxa_juros_mensal: Number(form.taxa_juros_mensal),
+      quantidade_parcelas: Number(form.quantidade_parcelas),
+      valor_parcela: valorParcela,
+      data_primeiro_vencimento: form.data_primeiro_vencimento,
+      forma_pagamento_padrao: form.forma_pagamento_padrao || null,
+      sistema_calculo: form.sistema_calculo,
+      taxa_juros_mora: Number(form.taxa_juros_mora || 0),
+      tipo_mora: form.tipo_mora || "mensal",
+      multa_atraso_valor: Number(form.multa_atraso_valor || 0),
+      multa_atraso_tipo: form.multa_atraso_tipo || "percentual",
+      status: "ativo"
+    };
+    const [novoEmp] = await api("emprestimos", {method:"POST", body:payload, prefer:"return=representation"});
+    const parcelasPayload = parcelas.map(p => ({...p, user_id: session.user.id, emprestimo_id: novoEmp.id}));
+    await api("parcelas", {method:"POST", body:parcelasPayload});
+    state.sheet = null;
+    await abrirCliente(state.clienteAtual);
+    state.toast = "Empréstimo cadastrado com " + form.quantidade_parcelas + " parcela(s).";
+  }catch(e){ state.toast = "Erro: " + e.message; }
+  state.busy = false; render();
+}
+
+async function registrarPagamento(parcela, valorPago, formaPagamento){
+  state.busy = true; render();
+  try{
+    const novoValorPago = Number(parcela.valor_pago||0) + Number(valorPago);
+    const status = novoValorPago >= Number(parcela.valor_original) ? "paga" : "parcial";
+    await api(`parcelas?id=eq.${parcela.id}`, {method:"PATCH", body:{
+      valor_pago: novoValorPago, status, data_pagamento: new Date().toISOString().slice(0,10)
+    }});
+    await api("pagamentos", {method:"POST", body:{
+      user_id: session.user.id,
+      cliente_id: state.clienteAtual.id,
+      emprestimo_id: state.emprestimoAtual.id,
+      valor_pago: Number(valorPago),
+      forma_pagamento: formaPagamento,
+      data_pagamento: new Date().toISOString().slice(0,10)
+    }});
+    await abrirEmprestimo(state.emprestimoAtual);
+    state.toast = "Pagamento registrado.";
+  }catch(e){ state.toast = "Erro: " + e.message; }
+  state.busy = false; render();
+}
+
+/* ============================================================
+   JUROS DE MORA + MULTA (parcelas em atraso)
+============================================================ */
+function calcularEncargos(emp, parcela){
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const venc = new Date(parcela.data_vencimento + "T00:00:00");
+  const saldoBase = Number(parcela.valor_original) - Number(parcela.valor_pago||0);
+  const diasAtraso = Math.floor((hoje - venc) / 86400000);
+
+  if(parcela.status === "paga" || diasAtraso <= 0 || saldoBase <= 0){
+    return { diasAtraso: 0, valorMora: 0, valorMulta: 0, saldoDevedor: Math.max(saldoBase,0), atrasada:false };
+  }
+
+  const taxaMora = Number(emp.taxa_juros_mora || 0) / 100;
+  let valorMora = 0;
+  if(taxaMora > 0){
+    if(emp.tipo_mora === "diaria"){
+      valorMora = saldoBase * taxaMora * diasAtraso;
+    } else {
+      valorMora = saldoBase * taxaMora * (diasAtraso / 30);
+    }
+  }
+
+  let valorMulta = 0;
+  const multaBase = Number(emp.multa_atraso_valor || 0);
+  if(multaBase > 0){
+    valorMulta = emp.multa_atraso_tipo === "fixo" ? multaBase : saldoBase * (multaBase/100);
+  }
+
+  const saldoDevedor = saldoBase + valorMora + valorMulta;
+  return { diasAtraso, valorMora, valorMulta, saldoDevedor, atrasada:true };
+}
+
+/* ============================================================
+   FORMAT HELPERS
+============================================================ */
+function brl(v){
+  return Number(v||0).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+}
+function fmtData(d){
+  if(!d) return "-";
+  const dt = new Date(d + "T00:00:00");
+  return dt.toLocaleDateString('pt-BR');
+}
+function statusLabel(s){
+  const map = {ativo:"Ativo",quitado:"Quitado",vencido:"Vencido",renegociado:"Renegociado",cancelado:"Cancelado",
+    a_vencer:"A vencer",paga:"Paga",vencida:"Vencida",parcial:"Parcial"};
+  return map[s] || s;
+}
+
+/* ============================================================
+   UI RENDER
+============================================================ */
+const root = document.getElementById("app");
+
+function App(){
+  root.innerHTML = "";
+  if(state.toast){
+    setTimeout(()=>{ state.toast=null; render(); }, 2600);
+  }
+
+  if(!session){
+    root.appendChild(AuthScreen());
+    return;
+  }
+
+  const wrap = document.createElement("div");
+  wrap.style.display = "flex";
+  wrap.style.flexDirection = "column";
+  wrap.style.minHeight = "100vh";
+
+  wrap.appendChild(TopBar());
+  wrap.appendChild(MainView());
+  wrap.appendChild(TabBar());
+  if(state.sheet) wrap.appendChild(Sheet());
+  if(state.toast) wrap.appendChild(Toast(state.toast));
+  root.appendChild(wrap);
+}
+
+function el(tag, props={}, children=[]){
+  const e = document.createElement(tag);
+  Object.entries(props).forEach(([k,v])=>{
+    if(k==="class") e.className = v;
+    else if(k==="text") e.textContent = v;
+    else if(k.startsWith("on")) e.addEventListener(k.slice(2).toLowerCase(), v);
+    else e.setAttribute(k, v);
+  });
+  (Array.isArray(children)?children:[children]).forEach(c=>{
+    if(c) e.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+  });
+  return e;
+}
+
+function Toast(msg){
+  return el("div", {class:"toast", text:msg});
+}
+
+/* ---------- AUTH ---------- */
+function AuthScreen(){
+  const wrap = el("div", {class:"auth-screen"});
+  wrap.appendChild(el("h1", {text:"Berlan Roots"}));
+  wrap.appendChild(el("div", {class:"tagline", text:"Controle de empréstimos, do seu jeito."}));
+
+  if(state.authError) wrap.appendChild(el("div", {class:"error-msg", text:state.authError}));
+  if(state.toast) { wrap.appendChild(el("div", {class:"info-msg", text:state.toast})); }
+
+  const emailField = el("div",{class:"field"},[
+    el("label",{text:"E-mail"}),
+    el("input",{type:"email", id:"in-email", autocomplete:"email"})
+  ]);
+  const passField = el("div",{class:"field"},[
+    el("label",{text:"Senha"}),
+    el("input",{type:"password", id:"in-pass", autocomplete: state.authMode==="login"?"current-password":"new-password"})
+  ]);
+  wrap.appendChild(emailField);
+  wrap.appendChild(passField);
+
+  const btn = el("button", {class:"btn", text: state.busy ? "..." : (state.authMode==="login" ? "Entrar" : "Criar conta")});
+  btn.disabled = state.busy;
+  btn.addEventListener("click", ()=>{
+    const email = document.getElementById("in-email").value.trim();
+    const pass = document.getElementById("in-pass").value;
+    if(!email || !pass){ state.authError = "Preencha e-mail e senha."; render(); return; }
+    if(state.authMode==="login") doLogin(email, pass);
+    else doSignup(email, pass);
+  });
+  wrap.appendChild(btn);
+
+  const toggle = el("button", {class:"link-btn",
+    text: state.authMode==="login" ? "Não tem conta? Criar agora" : "Já tem conta? Entrar"});
+  toggle.addEventListener("click", ()=>{
+    state.authMode = state.authMode==="login" ? "signup" : "login";
+    state.authError = "";
+    render();
+  });
+  wrap.appendChild(toggle);
+  return wrap;
+}
+
+/* ---------- TOP BAR ---------- */
+function TopBar(){
+  const titles = {home:"Resumo", clientes:"Clientes", clienteDetalhe: state.clienteAtual?.nome || "Cliente",
+    emprestimoDetalhe: "Empréstimo"};
+  const header = el("header",{class:"topbar"});
+  const titleRow = el("div",{style:"display:flex;justify-content:space-between;align-items:center;"});
+  titleRow.appendChild(el("h1",{text: titles[state.screen] || "Berlan Roots"}));
+  if(state.screen === "home"){
+    const logout = el("button",{class:"link-btn", style:"margin:0;width:auto;font-size:12px;", text:"Sair"});
+    logout.addEventListener("click", doLogout);
+    titleRow.appendChild(logout);
+  }
+  header.appendChild(titleRow);
+  if(state.screen === "home") header.appendChild(el("div",{class:"subtitle", text:"Sua carteira de empréstimos"}));
+  return header;
+}
+
+/* ---------- MAIN VIEW ROUTER ---------- */
+function MainView(){
+  const main = el("main",{class:"view"});
+  if(state.screen === "home") main.appendChild(HomeView());
+  else if(state.screen === "clientes") main.appendChild(ClientesView());
+  else if(state.screen === "clienteDetalhe") main.appendChild(ClienteDetalheView());
+  else if(state.screen === "emprestimoDetalhe") main.appendChild(EmprestimoDetalheView());
+  return main;
+}
+
+/* ---------- HOME ---------- */
+function HomeView(){
+  const wrap = el("div");
+  if(!state.resumo){ wrap.appendChild(el("div",{class:"loading",text:"Carregando resumo..."})); return wrap; }
+  const r = state.resumo;
+  wrap.appendChild(el("div",{class:"ledger"},[
+    el("div",{class:"ledger-row"},[el("div",{class:"label",text:"Total emprestado"}), el("div",{class:"value num", text:brl(r.totalEmprestado)})]),
+    el("div",{class:"ledger-row"},[el("div",{class:"label",text:"Total recebido"}), el("div",{class:"value num pos", text:brl(r.totalRecebido)})]),
+    el("div",{class:"ledger-row"},[el("div",{class:"label",text:"Saldo em aberto"}), el("div",{class:"value num", text:brl(r.emAberto)})]),
+    el("div",{class:"ledger-row"},[el("div",{class:"label",text:"Empréstimos ativos"}), el("div",{class:"value num", text:String(r.qtdEmprestimosAtivos)})]),
+    el("div",{class:"ledger-row"},[el("div",{class:"label",text:"Parcelas vencidas"}), el("div",{class:"value num warn", text:String(r.qtdVencidas)})]),
+  ]));
+  wrap.appendChild(el("div",{class:"section-title", text:"ATALHOS"}));
+  const goBtn = el("button",{class:"btn secondary", text:"Ver clientes", style:"border:1px solid var(--line);margin-bottom:8px;"});
+  goBtn.addEventListener("click", loadClientes);
+  wrap.appendChild(goBtn);
+  return wrap;
+}
+
+/* ---------- CLIENTES ---------- */
+function ClientesView(){
+  const wrap = el("div");
+  const search = el("div",{class:"search-bar"},[
+    el("input",{type:"text", placeholder:"Buscar cliente...", id:"search-cliente"})
+  ]);
+  wrap.appendChild(search);
+
+  const list = state.clientes;
+  if(list === undefined || list.length === 0){
+    wrap.appendChild(el("div",{class:"empty-state"},[
+      el("div",{class:"big", text:"Nenhum cliente ainda"}),
+      el("div",{text:"Toque no + para cadastrar o primeiro."})
+    ]));
+  } else {
+    const listWrap = el("div",{id:"clientes-list"});
+    list.forEach(c=>{
+      const card = el("div",{class:"card"},[
+        el("div",{class:"row1"},[
+          el("div",{class:"name", text:c.nome}),
+          el("span",{class:"badge " + (c.ativo?"ativo":"vencida"), text: c.ativo ? "Ativo" : "Inativo"})
+        ]),
+        el("div",{class:"meta", text: (c.telefone_principal||"sem telefone")})
+      ]);
+      card.addEventListener("click", ()=>abrirCliente(c));
+      listWrap.appendChild(card);
+    });
+    wrap.appendChild(listWrap);
+
+    document.addEventListener; // noop keep
+    setTimeout(()=>{
+      const inp = document.getElementById("search-cliente");
+      if(inp) inp.addEventListener("input", (e)=>{
+        const q = e.target.value.toLowerCase();
+        [...listWrap.children].forEach((card,i)=>{
+          const nome = list[i].nome.toLowerCase();
+          card.style.display = nome.includes(q) ? "" : "none";
+        });
+      });
+    },0);
+  }
+  return wrap;
+}
+
+/* ---------- CLIENTE DETALHE ---------- */
+function ClienteDetalheView(){
+  const wrap = el("div");
+  const back = el("button",{class:"back-btn", text:"← Clientes"});
+  back.addEventListener("click", loadClientes);
+  wrap.appendChild(back);
+
+  const c = state.clienteAtual;
+  const header = el("div",{class:"client-detail-header"});
+  header.appendChild(el("h2",{text:c.nome, style:"margin-bottom:8px;"}));
+  if(c.documento) header.appendChild(el("div",{class:"meta", text:"Documento: " + c.documento}));
+  if(c.telefone_principal) header.appendChild(el("div",{class:"meta", text:"Telefone: " + c.telefone_principal}));
+  if(c.observacoes) header.appendChild(el("div",{class:"meta", text: c.observacoes, style:"margin-top:6px;"}));
+  const editBtn = el("button",{class:"btn secondary small", text:"Editar dados", style:"margin-top:10px;border:1px solid var(--line);"});
+  editBtn.addEventListener("click", ()=>{ state.sheet="editarCliente"; render(); });
+  header.appendChild(editBtn);
+  wrap.appendChild(header);
+
+  const topActions = el("div",{class:"top-actions", style:"margin-top:18px;"});
+  topActions.appendChild(el("div",{class:"section-title", text:"EMPRÉSTIMOS", style:"margin:0;"}));
+  const novoBtn = el("button",{class:"btn small", text:"+ Empréstimo"});
+  novoBtn.addEventListener("click", ()=>{ state.sheet = "novoEmprestimo"; render(); });
+  topActions.appendChild(novoBtn);
+  wrap.appendChild(topActions);
+
+  if(state.emprestimos.length === 0){
+    wrap.appendChild(el("div",{class:"empty-state"},[
+      el("div",{class:"big", text:"Sem empréstimos"}),
+      el("div",{text:"Cadastre o primeiro empréstimo deste cliente."})
+    ]));
+  } else {
+    state.emprestimos.forEach(emp=>{
+      const card = el("div",{class:"card"},[
+        el("div",{class:"row1"},[
+          el("div",{class:"name num", text:brl(emp.valor_principal)}),
+          el("span",{class:"badge " + emp.status, text: statusLabel(emp.status)})
+        ]),
+        el("div",{class:"meta", text: emp.quantidade_parcelas + "x de " + brl(emp.valor_parcela) + " · desde " + fmtData(emp.data_primeiro_vencimento)})
+      ]);
+      card.addEventListener("click", ()=>abrirEmprestimo(emp));
+      wrap.appendChild(card);
+    });
+  }
+  return wrap;
+}
+
+/* ---------- EMPRÉSTIMO DETALHE ---------- */
+function EmprestimoDetalheView(){
+  const wrap = el("div");
+  const back = el("button",{class:"back-btn", text:"← " + (state.clienteAtual?.nome || "Cliente")});
+  back.addEventListener("click", ()=>abrirCliente(state.clienteAtual));
+  wrap.appendChild(back);
+
+  const emp = state.emprestimoAtual;
+  wrap.appendChild(el("div",{class:"ledger", style:"margin:12px 0 18px;"},[
+    el("div",{class:"ledger-row"},[el("div",{class:"label",text:"Valor emprestado"}), el("div",{class:"value num", text:brl(emp.valor_principal)})]),
+    el("div",{class:"ledger-row"},[el("div",{class:"label",text:"Taxa mensal"}), el("div",{class:"value num", text: emp.taxa_juros_mensal + "%"})]),
+    el("div",{class:"ledger-row"},[el("div",{class:"label",text:"Parcelas"}), el("div",{class:"value num", text: emp.quantidade_parcelas + "x " + brl(emp.valor_parcela)})]),
+  ]));
+
+  wrap.appendChild(el("div",{class:"section-title", text:"PARCELAS"}));
+  const listWrap = el("div",{class:"ledger"});
+  if(state.parcelas.length===0){
+    listWrap.appendChild(el("div",{class:"loading", text:"Carregando parcelas..."}));
+  } else {
+    state.parcelas.forEach(p=>{
+      const enc = calcularEncargos(emp, p);
+      const row = el("div",{class:"parcela-row"});
+      row.appendChild(el("div",{class:"parcela-num", text:"#"+p.numero}));
+      const infoChildren = [
+        el("div",{class:"parcela-venc", text: fmtData(p.data_vencimento)}),
+        el("div",{class:"parcela-val", text: brl(p.valor_pago) + " de " + brl(p.valor_original)})
+      ];
+      if(enc.atrasada){
+        infoChildren.push(el("div",{class:"parcela-val", style:"color:var(--red);",
+          text: enc.diasAtraso + " dia(s) de atraso · mora " + brl(enc.valorMora) + " + multa " + brl(enc.valorMulta)}));
+        infoChildren.push(el("div",{class:"parcela-val", style:"font-weight:600;color:var(--red);",
+          text: "Saldo devedor: " + brl(enc.saldoDevedor)}));
+      }
+      const info = el("div",{class:"parcela-info"}, infoChildren);
+      row.appendChild(info);
+      const displayStatus = enc.atrasada ? "vencida" : p.status;
+      row.appendChild(el("span",{class:"badge " + displayStatus, text: statusLabel(displayStatus)}));
+      if(p.status !== "paga"){
+        const payBtn = el("button",{class:"btn small secondary", text:"Pagar", style:"border:1px solid var(--line);margin-left:8px;"});
+        payBtn.addEventListener("click", ()=>abrirPagamentoRapido(p, enc));
+        row.appendChild(payBtn);
+      }
+      listWrap.appendChild(row);
+    });
+  }
+  wrap.appendChild(listWrap);
+  return wrap;
+}
+
+function abrirPagamentoRapido(parcela, enc){
+  const sugestao = enc && enc.atrasada
+    ? enc.saldoDevedor.toFixed(2)
+    : (Number(parcela.valor_original) - Number(parcela.valor_pago||0)).toFixed(2);
+  const msg = enc && enc.atrasada
+    ? `Parcela #${parcela.numero} está ${enc.diasAtraso} dia(s) atrasada (mora ${brl(enc.valorMora)} + multa ${brl(enc.valorMulta)}). Valor a pagar:`
+    : `Valor pago (parcela #${parcela.numero}):`;
+  const valor = prompt(msg, sugestao);
+  if(valor === null) return;
+  const forma = prompt("Forma de pagamento (dinheiro, pix, cartao_credito, cartao_debito, cheque, transferencia):", "pix");
+  if(forma === null) return;
+  registrarPagamento(parcela, valor, forma);
+}
+
+/* ---------- TAB BAR ---------- */
+function TabBar(){
+  const nav = el("nav",{class:"tabbar"});
+  const items = [
+    {key:"home", icon:"◆", label:"Resumo", action: goHome},
+    {key:"clientes", icon:"○", label:"Clientes", action: loadClientes},
+  ];
+  items.forEach(it=>{
+    const active = state.screen === it.key || (it.key==="clientes" && (state.screen==="clienteDetalhe"||state.screen==="emprestimoDetalhe"));
+    const btn = el("button",{class: active ? "active":""},[
+      el("div",{class:"icon", text:it.icon}),
+      el("div",{text:it.label})
+    ]);
+    btn.addEventListener("click", it.action);
+    nav.appendChild(btn);
+  });
+  return nav;
+}
+
+/* ---------- SHEETS (modais) ---------- */
+function Sheet(){
+  const overlay = el("div",{class:"sheet-overlay"});
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay){ state.sheet=null; render(); } });
+  const sheet = el("div",{class:"sheet"});
+  sheet.appendChild(el("div",{class:"sheet-handle"}));
+
+  if(state.sheet === "novoCliente") sheet.appendChild(FormNovoCliente());
+  if(state.sheet === "editarCliente") sheet.appendChild(FormEditarCliente());
+  if(state.sheet === "novoEmprestimo") sheet.appendChild(FormNovoEmprestimo());
+
+  overlay.appendChild(sheet);
+  return overlay;
+}
+
+function FormNovoCliente(){
+  const wrap = el("div");
+  wrap.appendChild(el("div",{class:"sheet-header"},[
+    el("h2",{text:"Novo cliente"}),
+    (()=>{const b=el("button",{class:"close-x", text:"✕"}); b.addEventListener("click",()=>{state.sheet=null;render();}); return b;})()
+  ]));
+  const fields = [
+    {id:"nome", label:"Nome completo", type:"text", required:true},
+    {id:"documento", label:"CPF / CNPJ", type:"text"},
+    {id:"telefone_principal", label:"Telefone", type:"text"},
+    {id:"email", label:"E-mail", type:"email"},
+    {id:"observacoes", label:"Observações", type:"text"},
+  ];
+  fields.forEach(f=>{
+    wrap.appendChild(el("div",{class:"field"},[
+      el("label",{text:f.label}),
+      el("input",{type:f.type, id:"f-"+f.id})
+    ]));
+  });
+  const saveBtn = el("button",{class:"btn", text: state.busy ? "Salvando..." : "Salvar cliente"});
+  saveBtn.addEventListener("click", ()=>{
+    const nome = document.getElementById("f-nome").value.trim();
+    if(!nome){ alert("Informe o nome do cliente."); return; }
+    const payload = {
+      nome,
+      documento: document.getElementById("f-documento").value.trim() || null,
+      telefone_principal: document.getElementById("f-telefone_principal").value.trim() || null,
+      email: document.getElementById("f-email").value.trim() || null,
+      observacoes: document.getElementById("f-observacoes").value.trim() || null,
+    };
+    criarCliente(payload);
+  });
+  wrap.appendChild(saveBtn);
+  return wrap;
+}
+
+function FormEditarCliente(){
+  const c = state.clienteAtual;
+  const wrap = el("div");
+  wrap.appendChild(el("div",{class:"sheet-header"},[
+    el("h2",{text:"Editar cliente"}),
+    (()=>{const b=el("button",{class:"close-x", text:"✕"}); b.addEventListener("click",()=>{state.sheet=null;render();}); return b;})()
+  ]));
+  const fields = [
+    {id:"nome", label:"Nome completo", val:c.nome},
+    {id:"documento", label:"CPF / CNPJ", val:c.documento},
+    {id:"telefone_principal", label:"Telefone", val:c.telefone_principal},
+    {id:"email", label:"E-mail", val:c.email},
+    {id:"observacoes", label:"Observações", val:c.observacoes},
+  ];
+  fields.forEach(f=>{
+    wrap.appendChild(el("div",{class:"field"},[
+      el("label",{text:f.label}),
+      el("input",{type:"text", id:"e-"+f.id, value: f.val || ""})
+    ]));
+  });
+  const saveBtn = el("button",{class:"btn", text: state.busy ? "Salvando..." : "Salvar alterações"});
+  saveBtn.addEventListener("click", ()=>{
+    const payload = {};
+    fields.forEach(f=>{ payload[f.id] = document.getElementById("e-"+f.id).value.trim() || null; });
+    editarCliente(c.id, payload);
+  });
+  wrap.appendChild(saveBtn);
+  return wrap;
+}
+
+function FormNovoEmprestimo(){
+  const wrap = el("div");
+  wrap.appendChild(el("div",{class:"sheet-header"},[
+    el("h2",{text:"Novo empréstimo"}),
+    (()=>{const b=el("button",{class:"close-x", text:"✕"}); b.addEventListener("click",()=>{state.sheet=null;render();}); return b;})()
+  ]));
+  wrap.appendChild(el("div",{class:"field"},[
+    el("label",{text:"Valor emprestado (R$)"}),
+    el("input",{type:"number", step:"0.01", id:"f-valor"})
+  ]));
+  const grid = el("div",{class:"grid2"});
+  grid.appendChild(el("div",{class:"field"},[
+    el("label",{text:"Taxa de juros ao mês (%)"}),
+    el("input",{type:"number", step:"0.01", id:"f-taxa", value:"0"})
+  ]));
+  grid.appendChild(el("div",{class:"field"},[
+    el("label",{text:"Nº de parcelas"}),
+    el("input",{type:"number", id:"f-qtd", value:"1"})
+  ]));
+  wrap.appendChild(grid);
+  wrap.appendChild(el("div",{class:"field"},[
+    el("label",{text:"Data da 1ª parcela"}),
+    el("input",{type:"date", id:"f-data"})
+  ]));
+  wrap.appendChild(el("div",{class:"field"},[
+    el("label",{text:"Sistema de cálculo"}),
+    el("select",{id:"f-sistema"},[
+      el("option",{value:"price", text:"Price (parcelas fixas)"}),
+      el("option",{value:"juros_simples", text:"Juros simples"})
+    ])
+  ]));
+  wrap.appendChild(el("div",{class:"divider"}));
+  wrap.appendChild(el("div",{class:"section-title", text:"ENCARGOS POR ATRASO (opcional)"}));
+  const gridMora = el("div",{class:"grid2"});
+  gridMora.appendChild(el("div",{class:"field"},[
+    el("label",{text:"Juros de mora (%)"}),
+    el("input",{type:"number", step:"0.01", id:"f-mora-taxa", value:"0"})
+  ]));
+  gridMora.appendChild(el("div",{class:"field"},[
+    el("label",{text:"Mora é..."}),
+    el("select",{id:"f-mora-tipo"},[
+      el("option",{value:"mensal", text:"Ao mês"}),
+      el("option",{value:"diaria", text:"Ao dia"})
+    ])
+  ]));
+  wrap.appendChild(gridMora);
+  const gridMulta = el("div",{class:"grid2"});
+  gridMulta.appendChild(el("div",{class:"field"},[
+    el("label",{text:"Multa por atraso"}),
+    el("input",{type:"number", step:"0.01", id:"f-multa-valor", value:"0"})
+  ]));
+  gridMulta.appendChild(el("div",{class:"field"},[
+    el("label",{text:"Multa é..."}),
+    el("select",{id:"f-multa-tipo"},[
+      el("option",{value:"percentual", text:"% do saldo"}),
+      el("option",{value:"fixo", text:"Valor fixo (R$)"})
+    ])
+  ]));
+  wrap.appendChild(gridMulta);
+  const saveBtn = el("button",{class:"btn", text: state.busy ? "Calculando..." : "Simular e salvar"});
+  saveBtn.addEventListener("click", ()=>{
+    const form = {
+      valor_principal: document.getElementById("f-valor").value,
+      taxa_juros_mensal: document.getElementById("f-taxa").value,
+      quantidade_parcelas: document.getElementById("f-qtd").value,
+      data_primeiro_vencimento: document.getElementById("f-data").value,
+      sistema_calculo: document.getElementById("f-sistema").value,
+      taxa_juros_mora: document.getElementById("f-mora-taxa").value,
+      tipo_mora: document.getElementById("f-mora-tipo").value,
+      multa_atraso_valor: document.getElementById("f-multa-valor").value,
+      multa_atraso_tipo: document.getElementById("f-multa-tipo").value,
+    };
+    if(!form.valor_principal || !form.quantidade_parcelas || !form.data_primeiro_vencimento){
+      alert("Preencha valor, número de parcelas e data da 1ª parcela."); return;
+    }
+    criarEmprestimo(form);
+  });
+  wrap.appendChild(saveBtn);
+  return wrap;
+}
+
+/* ---------- FAB (novo cliente na tela de clientes) ---------- */
+function maybeRenderFab(){
+  const existing = document.querySelector(".fab");
+  if(existing) existing.remove();
+  if(state.screen === "clientes" && !state.sheet){
+    const fab = el("div",{class:"fab"},[
+      (()=>{
+        const b = el("button",{text:"+"});
+        b.addEventListener("click", ()=>{ state.sheet="novoCliente"; render(); });
+        return b;
+      })()
+    ]);
+    document.getElementById("app").appendChild(fab);
+  }
+}
+
+/* patch render to include fab */
+const _origRender = render;
+render = function(){ _origRender(); maybeRenderFab(); };
+
+/* ============================================================
+   INIT
+============================================================ */
+loadSession();
+if(session){ goHome(); } else { state.screen="auth"; render(); }
+</script>
+</body>
+</html>
