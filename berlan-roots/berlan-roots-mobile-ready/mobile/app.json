@@ -1,0 +1,13 @@
+{
+  "expo": {
+    "name": "ROOTS Cobranças",
+    "slug": "roots-cobrancas",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "roots",
+    "userInterfaceStyle": "light",
+    "ios": { "supportsTablet": false, "bundleIdentifier": "com.berlan.rootscobrancas" },
+    "android": { "package": "com.berlan.rootscobrancas", "adaptiveIcon": { "backgroundColor": "#173F35" } },
+    "plugins": []
+  }
+}
